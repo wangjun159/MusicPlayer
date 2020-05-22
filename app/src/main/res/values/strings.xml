@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">MusicPlayer</string>
+    <string name="song">音乐</string>
+    <string name="singer">歌手</string>
+    <string name="time">时间</string>
+    <string name="sequence">顺序播放（默认）</string>
+    <string name="random">随机播放</string>
+    <string name="single">单曲循环</string>
+</resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/sequence_play"
+        android:icon="@drawable/sequence"
+        android:title="@string/sequence"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/random_play"
+        android:icon="@drawable/random_icon"
+        android:title="@string/random"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/single_play"
+        android:icon="@drawable/single"
+        app:showAsAction="never"
+        android:title="@string/single" />
+</menu>
