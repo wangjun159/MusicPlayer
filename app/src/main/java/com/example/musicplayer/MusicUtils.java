@@ -4,8 +4,10 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +16,7 @@ import java.util.List;
  * 音乐工具类
  */
 public class MusicUtils {
+    private static final String TAG = "MusicUtils";
 
     /**
      * getMusicData()方法扫描系统里的歌曲，放在list集合中
@@ -34,8 +37,9 @@ public class MusicUtils {
                 song.setPath(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)));
                 song.setDuration(cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)));
                 song.setSize(cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE)));
-                String albumId=cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID));
-                song.setImage(getAlbum(albumId));
+                //String albumId=cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID));
+                String uri=cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
+                song.setImage(getAlbum(uri));
 
                 //分离出歌曲名和歌手。因为本地媒体库读取的歌曲信息不规范
                 if(cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE))>1000*60){
@@ -63,29 +67,47 @@ public class MusicUtils {
         }
     }
 
-    /**
-     * getAlbum()方法根据图片id获取图片
-     */
-    public static Bitmap getAlbum(String str){
-        String uriAlbums="content://media/external/audio/albums";
-        //album_art字段存储的是音乐图片的路径
-        String[] projection = new String[]{"album_art"};
-        Cursor cursor=MyApplication.getContext().getContentResolver().query(Uri.parse(uriAlbums+"/"+str),
-                projection,null,null,null);
-        String album_art=null;
-        if(cursor.getCount()>0 && cursor.getColumnCount()>0){
-            cursor.moveToNext();
-            album_art=cursor.getString(0);
-        }
-        cursor.close();
+//    /**
+//     * getAlbum()方法根据图片id获取图片
+//     */
+//    public static Bitmap getAlbum(String str){
+//        String uriAlbums="content://media/external/audio/albums";
+//        //album_art字段存储的是音乐图片的路径
+//        String[] projection = new String[]{"album_art"};
+//        Cursor cursor=MyApplication.getContext().getContentResolver().query(Uri.parse(uriAlbums+"/"+str),
+//                projection,null,null,null);
+//        String album_art=null;
+//        if(cursor.getCount()>0 && cursor.getColumnCount()>0){
+//            cursor.moveToNext();
+//            album_art=cursor.getString(0);
+//        }
+//        cursor.close();
+//
+//        //判断album_art是否为空，不为空就将该歌曲的专辑图片地址传进去，为空就使用默认专辑图片
+//        Bitmap bitmap;
+//        if(album_art != null){
+//            bitmap= BitmapFactory.decodeFile(album_art);
+//        }else {
+//            bitmap=BitmapFactory.decodeResource(MyApplication.getContext().getResources(),R.drawable.moren);
+//        }
+//        return bitmap;
+//    }
 
-        //判断album_art是否为空，不为空就将该歌曲的专辑图片地址传进去，为空就使用默认专辑图片
-        Bitmap bitmap;
-        if(album_art != null){
-            bitmap= BitmapFactory.decodeFile(album_art);
+    /**
+     * 加载封面
+     * @param mediaUri MP3文件路径
+     */
+    public static Bitmap getAlbum(String mediaUri) {
+        MediaMetadataRetriever mediaMetadataRetriever=new MediaMetadataRetriever();
+        mediaMetadataRetriever.setDataSource(mediaUri);
+        byte[] picture = mediaMetadataRetriever.getEmbeddedPicture();
+        Bitmap bitmap ;
+        bitmap= BitmapFactory.decodeByteArray(picture,0,picture.length);
+        if(bitmap!=null) {
+            return bitmap;
         }else {
             bitmap=BitmapFactory.decodeResource(MyApplication.getContext().getResources(),R.drawable.moren);
+            return bitmap;
         }
-        return bitmap;
     }
 }

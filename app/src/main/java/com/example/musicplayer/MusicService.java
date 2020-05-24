@@ -1,6 +1,7 @@
 package com.example.musicplayer;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -205,14 +206,28 @@ public class MusicService extends Service {
 
         //实例化NotificationManager
         notificationManager=(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        notification=new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.small)
-                .setCustomBigContentView(views)
-                .setContent(views)
-                .setContentIntent(pi)
-                .setWhen(System.currentTimeMillis())
-                .build();
+        //判断系统版本
+        if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O){
+            String CHANNEL_ID="MusicPlayer";
+            String CHANNEL_NAME = "音乐";
+            NotificationChannel channel=new NotificationChannel(CHANNEL_ID,CHANNEL_NAME,NotificationManager.IMPORTANCE_LOW);
+            notificationManager.createNotificationChannel(channel);
+            notification=new NotificationCompat.Builder(this,CHANNEL_ID)
+                    .setSmallIcon(R.drawable.small)
+                    .setCustomBigContentView(views)
+                    .setContent(views)
+                    .setContentIntent(pi)
+                    .setWhen(System.currentTimeMillis())
+                    .build();
+        }else {
+            notification = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.drawable.small)
+                    .setCustomBigContentView(views)
+                    .setContent(views)
+                    .setContentIntent(pi)
+                    .setWhen(System.currentTimeMillis())
+                    .build();
+        }
 
         startForeground(111,notification);
 
@@ -291,7 +306,8 @@ public class MusicService extends Service {
         if(notificationManager!=null){
             notificationManager.cancel(111);
         }
-
-        unregisterReceiver(musicReceiver);
+        if(musicReceiver!=null) {
+            unregisterReceiver(musicReceiver);
+        }
     }
 }

@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //实例化Toolbar，并让他有ActionBar的功能
         Toolbar toolbar=(Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("我的音乐");
         setSupportActionBar(toolbar);
 
         //运行时权限处理，判断用户是否授权过权限，如果没有就申请该权限
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(MainActivity.this,new String[]
-                    {Manifest.permission.READ_EXTERNAL_STORAGE},1);
+                    {Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
         }else {
             initSongs();//初始化歌曲信息
         }

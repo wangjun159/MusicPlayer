@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MusicPlayer</string>
+    <string name="app_name">i音乐</string>
     <string name="song">音乐</string>
     <string name="singer">歌手</string>
     <string name="time">时间</string>
